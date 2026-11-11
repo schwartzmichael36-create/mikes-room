@@ -503,9 +503,11 @@ document.getElementById('tiercards').innerHTML = TIERS.map((t,i)=>`<div class="t
 // ---- Wall ----------------------------------------------------------------
 (function wall(){
   const box = document.getElementById('wallbox');
-  const entries = ITEMS.filter(i=>FUNDED[i.asin]).map(i=>({name:FUNDED[i.asin], item:i.name, tier:tierFor(i.price).name}));
+  const people = {};
+  Object.entries(FUNDED).forEach(([asin,name])=>{ const i = ITEMS.find(x=>x.asin===asin); if(!i) return; (people[name] ||= new Set()).add(TIERS.indexOf(tierFor(i.price))); });
+  const entries = Object.entries(people).map(([name,set])=>({name, tiers:[...set].sort().map(k=>TIERS[k].name)}));
   if (!entries.length){ box.innerHTML = '<p class="empty">No investors yet. The first name on this wall holds the top spot for the life of the room.</p>'; return; }
-  box.innerHTML = '<ol>' + entries.map(e=>`<li><b>${e.name}</b> <span>· ${e.item} · ${e.tier}</span></li>`).join('') + '</ol>';
+  box.innerHTML = '<ol>' + entries.map(e=>`<li><b>${e.name}</b> <span>· ${e.tiers.join(' · ')}</span></li>`).join('') + '</ol>';
 })();
 
 // ---- Charts --------------------------------------------------------------
