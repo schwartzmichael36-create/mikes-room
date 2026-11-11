@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Mike's Room 2.0</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a four-slide pitch that fills the screen, then a picture-first catalogue grouped by category. */
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --ink:#14201b; --muted:#5b655f; --line:#dde2de; --soft:#eef1ee;
+  --accent:#15825f; --accent-ink:#ffffff; --accent-soft:#e3f1ea;
+  --s1:#15825f; --s2:#b8862b; --s3:#3b6fb6; --s4:#a7503c; --s5:#6b5ca5; --s0:#9aa39e;
+  --display:'IBM Plex Serif',Georgia,'Times New Roman',serif;
+  --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#121715; --surface:#1a211d; --ink:#eef1ee; --muted:#a6b0aa; --line:#2b342f; --soft:#1f2824;
+  --accent:#2a9d78; --accent-ink:#0b1510; --accent-soft:#1c3a2f;
+  --s1:#2a9d78; --s2:#b98a2a; --s3:#5b8fd6; --s4:#c97a62; --s5:#8f80d4; --s0:#6f7a74; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#121715; --surface:#1a211d; --ink:#eef1ee; --muted:#a6b0aa; --line:#2b342f; --soft:#1f2824;
+  --accent:#2a9d78; --accent-ink:#0b1510; --accent-soft:#1c3a2f;
+  --s1:#2a9d78; --s2:#b98a2a; --s3:#5b8fd6; --s4:#c97a62; --s5:#8f80d4; --s0:#6f7a74; color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,8vw,76px);line-height:1}
+h2{font-size:clamp(24px,3.4vw,30px);line-height:1.15}
+h3{font-size:19px;line-height:1.25}
+p{margin:0;max-width:66ch}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:6px;font-weight:600;text-decoration:none;border:1px solid var(--accent);font:600 15px var(--body);cursor:pointer;background:var(--accent);color:var(--accent-ink);min-height:44px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.big{font-size:18px;padding:16px 26px;min-height:56px}
+.btn:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- Deck: single dark look over the photo ---- */
+.deck{--bg:#0b1513;--surface:#13201d;--ink:#f3f6f4;--muted:#b8c4bf;--line:rgba(255,255,255,.18);--soft:rgba(255,255,255,.08);--accent:#3fc496;--accent-ink:#06120d;--s0:#8a9793;
+  color:var(--ink);color-scheme:dark;position:relative;min-height:100%;display:grid;grid-template-rows:auto 1fr auto;padding-block:0 18px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));background:#0b1513;touch-action:pan-y;overflow:hidden}
+.deck .bg{position:absolute;inset:0;background:url(img/bg.jpg) center 40%/cover no-repeat;z-index:0}
+.deck .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,16,14,.72) 0%,rgba(6,16,14,.82) 55%,rgba(6,16,14,.94) 100%)}
+.deck>*{position:relative;z-index:1}
+.deck .mast{display:flex;justify-content:flex-end;padding-block:14px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.deck .mast a{color:var(--muted);text-decoration:none}
+.slides{position:relative;display:grid;align-items:center;max-width:960px;width:100%;margin:0 auto}
+.slide{display:none;gap:clamp(16px,2.6vw,26px);padding-block:30px;animation:in .35s ease}
+.slide.on{display:grid}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide .q{font-family:var(--display);font-weight:600;font-size:clamp(44px,9vw,96px);line-height:.98;letter-spacing:-.02em;text-wrap:balance}
+.slide .big{font-size:clamp(22px,3.2vw,34px);line-height:1.25;font-family:var(--display);max-width:24ch;text-wrap:balance}
+.slide .sub{font-size:clamp(17px,2.2vw,22px);color:var(--muted);max-width:46ch}
+.slide ol,.slide ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.chain li{font-size:clamp(22px,3.4vw,38px);font-family:var(--display);line-height:1.15;color:var(--muted)}
+.chain li b{color:var(--ink);font-weight:600}
+.chain li.out{color:var(--accent)}
+.chain li.out b{color:var(--accent)}
+/* thesis chain: five steps that climb like a price chart */
+.thesis{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;align-items:end;list-style:none;margin:0;padding:0}
+.thesis li{display:grid;gap:6px;padding:12px 12px 14px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.06);font-family:var(--display);font-weight:600;font-size:clamp(15px,1.8vw,20px);line-height:1.15;min-width:0;margin-bottom:calc((4 - var(--k)) * 10px);position:relative}
+.thesis li .n{font:500 11px var(--mono);letter-spacing:.08em;color:var(--accent)}
+.thesis li.out{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.thesis li.out .n{color:var(--accent-ink)}
+.thesis li:not(:last-child)::after{content:"→";position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--accent);font:600 14px var(--body);z-index:1}
+@media (max-width:640px){.thesis{grid-template-columns:1fr 1fr}.thesis li{margin-bottom:0;margin-left:calc(var(--k) * 6px)}.thesis li:not(:last-child)::after{content:none}.thesis li:last-child{grid-column:1/-1}}
+.problem{border-left:3px solid #e07a5f;padding:10px 0 10px 16px;display:grid;gap:4px}
+.problem .n{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#f0a58d}
+.problem p{font-size:clamp(15px,1.9vw,18px);line-height:1.45;color:var(--ink);max-width:62ch}
+.quote{margin:0;font-family:var(--display);font-size:clamp(19px,2.6vw,28px);line-height:1.3;color:#e6c46a;max-width:30ch;text-wrap:balance}
+.returns{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.returns div{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:rgba(255,255,255,.06);display:grid;gap:4px;align-content:start}
+.returns .amt{font:500 clamp(36px,5vw,52px)/1 var(--mono);color:var(--accent)}
+.returns .name{font-family:var(--display);font-weight:600;font-size:clamp(18px,2.2vw,22px);line-height:1.2}
+.returns .what{font-size:15px;color:var(--muted);line-height:1.4}
+.slidechart{border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;background:rgba(0,0,0,.25);display:grid;gap:6px;min-width:0;position:relative}
+.slidechart .cap{font:12px var(--mono);color:var(--muted)}
+.slidechart svg{width:100%;height:auto;display:block;overflow:visible}
+.risklist li{font-size:clamp(15px,2vw,19px);line-height:1.4;padding:10px 0;border-top:1px solid var(--line);color:var(--ink);display:grid;gap:2px}
+.risklist .n{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.risklist li.plain{font-family:var(--display);font-style:italic;color:var(--muted)}
+.slide .onlyrisk{font:italic 15px/1.5 var(--display);color:var(--muted);padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);max-width:48ch;margin-top:8px}
+.risklist li:last-child{border-bottom:1px solid var(--line)}
+.finalgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(18px,4vw,40px);align-items:center}
+.finalgrid .me{border-radius:10px;overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5);max-width:100%}
+.finalgrid .me img{display:block;width:100%;height:auto;max-width:100%}
+.finaltext{display:grid;gap:22px;justify-items:start}
+.finaltext .q{font-size:clamp(34px,5.6vw,66px);text-transform:uppercase;letter-spacing:.01em}
+.finaltext .gold{color:#e6c46a}
+@media (max-width:640px){.finalgrid{grid-template-columns:1fr}.finalgrid .me{max-width:300px;justify-self:center}.finaltext{justify-items:center;text-align:center}}
+.deck .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:960px;width:100%;margin:0 auto;padding-top:10px;border-top:1px solid var(--line)}
+.dots{display:flex;gap:8px}
+.dots button{width:10px;height:10px;border-radius:50%;border:1px solid var(--ink);background:transparent;padding:0;cursor:pointer}
+.dots button[aria-current="true"]{background:var(--ink)}
+.nav .cnt{font:12px var(--mono);color:var(--muted);white-space:nowrap}
+.nav .btn{flex-shrink:0}
+.deck .btn.ghost{color:var(--ink);border-color:var(--line)}
+
+/* ---- Catalogue (hidden until opened) ---- */
+.site{display:none}
+body.open .deck{display:none}
+body.open .site{display:block}
+.wrap{max-width:960px;margin:0 auto;padding-block:0 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:3;background:var(--bg);border-bottom:1px solid var(--ink);padding-block:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar .t{font-family:var(--display);font-weight:600;font-size:18px}
+.topbar .r{display:flex;gap:10px;align-items:center;font:12px var(--mono);color:var(--muted);white-space:nowrap}
+.topbar .r a{color:var(--muted)}
+.topbar .pb{width:120px;height:8px;background:var(--soft);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.topbar .pb i{display:block;height:100%;background:var(--accent);width:0}
+section{padding-block:40px;border-top:1px solid var(--line)}
+section:first-of-type{border-top:0}
+.render{border-radius:8px;overflow:hidden;border:1px solid var(--line);margin-top:10px}
+.render img{display:block;width:100%;height:auto}
+section>h2{margin-bottom:6px}
+.lede{color:var(--muted);margin-bottom:22px;max-width:62ch}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 52px);z-index:2;background:var(--bg);padding-block:8px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 13px var(--body);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.group{display:grid;gap:12px;margin-bottom:30px}
+.group h3{display:flex;align-items:center;gap:10px;font-size:20px;flex-wrap:wrap}
+.group h3 i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.group h3 span{font:12px var(--mono);color:var(--muted);letter-spacing:.04em}
+.assets{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+@media (max-width:360px){.assets{grid-template-columns:1fr}}
+.asset{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:grid;grid-template-rows:auto 1fr auto;min-width:0;position:relative}
+.asset .img{background:#fff;position:relative;padding-top:100%;min-width:0;border-bottom:1px solid var(--line)}
+.asset .img img{position:absolute;top:12px;left:12px;width:calc(100% - 24px);height:calc(100% - 24px);object-fit:contain;display:block}
+.asset .body{padding:12px 14px 6px;display:grid;gap:4px;align-content:start}
+.asset h4{margin:0;font:600 15px/1.3 var(--body);overflow-wrap:anywhere;min-width:0}
+.asset .body,.asset .foot{min-width:0}
+.asset .why{font-size:13px;color:var(--muted)}
+.asset .foot{padding:8px 14px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.asset .price{font-family:var(--mono);font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}
+.asset .tier{font:11px var(--mono);color:var(--muted);letter-spacing:.04em;display:block}
+.asset .btn{padding:8px 16px;min-height:38px;font-size:14px}
+.asset.funded .img{opacity:.5}
+.asset.funded .btn{background:var(--soft);color:var(--muted);border-color:var(--line);pointer-events:none}
+.asset .fundedby{position:absolute;top:10px;left:10px;background:var(--accent);color:var(--accent-ink);font:500 11px var(--mono);padding:3px 8px;border-radius:999px;z-index:1}
+
+/* status tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:4px}
+.tile .v{font-family:var(--mono);font-size:26px;font-weight:500;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .l{font-size:13px;color:var(--muted)}
+.bar{height:10px;background:var(--soft);border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--accent);width:0;border-radius:5px;transition:width .6s ease}
+.progress{display:grid;gap:8px;margin-top:16px}
+.progress .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+
+/* tiers + steps + wall */
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.tiercard{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:10px;align-content:start}
+.tiercard .amt{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.tiercard ul{margin:0;padding-left:18px;font-size:14px;display:grid;gap:6px}
+.tiercard.lead{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.tiercard .inherit{font-size:12px;color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;counter-reset:s}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:6px}
+.step::before{counter-increment:s;content:"Step " counter(s);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.step p{font-size:14px;color:var(--muted)}
+.callout{margin-top:16px;background:var(--accent-soft);border-radius:6px;padding:14px 16px;font-size:14px;display:grid;gap:4px}
+.callout b{font-weight:600}
+.wall{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px;display:grid;gap:10px}
+.wall ol{margin:0;padding-left:22px;display:grid;gap:8px;font-size:15px}
+.wall li span{color:var(--muted);font-size:13px;font-family:var(--mono)}
+.wall .empty{color:var(--muted);font-size:14px}
+
+/* charts */
+details.analysis>summary{cursor:pointer;font-family:var(--display);font-size:20px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.analysis>summary::-webkit-details-marker{display:none}
+details.analysis>summary::after{content:"Show";font:500 13px var(--mono);color:var(--accent)}
+details.analysis[open]>summary::after{content:"Hide"}
+.figs{display:grid;gap:16px;margin-top:18px}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 18px 14px;display:grid;gap:10px;min-width:0}
+.fig h3{font-size:17px}
+.fig .sub{font-size:13px;color:var(--muted)}
+.fig svg{width:100%;height:auto;display:block;overflow:visible}
+.fig .note{font-size:12px;color:var(--muted);font-family:var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.legend i.line{height:2px;width:16px;border-radius:1px}
+.tt{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font:12px/1.4 var(--mono);padding:6px 8px;border-radius:4px;white-space:nowrap;transform:translate(-50%,calc(-100% - 10px));opacity:0;transition:opacity .12s;z-index:5}
+.tt.on{opacity:1}
+.figwrap{position:relative;min-width:0}
+svg text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+svg .ax{stroke:var(--line);stroke-width:1}
+svg .grid{stroke:var(--line);stroke-width:1;stroke-dasharray:2 3}
+svg .lbl{fill:var(--ink);font-size:11px}
+details.table{font-size:13px}
+details.table summary{cursor:pointer;color:var(--accent)}
+details.table table{border-collapse:collapse;width:100%;margin-top:8px}
+details.table td,details.table th{text-align:left;padding:4px 8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+
+.risk{font-size:12px;color:var(--muted);columns:2;column-gap:28px;line-height:1.5}
+.risk p{break-inside:avoid;margin-bottom:8px;max-width:none}
+@media (max-width:640px){.risk{columns:1}.tierlist li{grid-template-columns:1fr}}
+footer{padding-block:28px;border-top:1px solid var(--ink);font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}.slide{animation:none}}
+</style>
+
+<!-- ============ DECK ============ -->
+<div class="deck" id="deck">
+  <div class="bg" aria-hidden="true"></div>
+  <div class="mast"><a href="#assets" data-open>Skip to the list →</a></div>
+
+  <div class="slides" id="slides">
+    <div class="slide on" data-i="0">
+      <span class="eyebrow">Mike's Room 2.0</span>
+      <h1 class="q">Do you like money?</h1>
+      <p class="sub">Every great fortune starts with one investment.<br>Yours starts with my bedroom.</p>
+    </div>
+
+    <div class="slide" data-i="1">
+      <span class="eyebrow">What is rest?</span>
+      <p class="big">A well-rested mind is a wealth-generating asset.</p>
+      <p class="sub">The investment thesis is simple:</p>
+      <ol class="thesis" aria-label="Investment thesis">
+        <li style="--k:0"><span class="n">01</span><span>Better Room</span></li>
+        <li style="--k:1"><span class="n">02</span><span>Better Sleep</span></li>
+        <li style="--k:2"><span class="n">03</span><span>Higher Productivity</span></li>
+        <li style="--k:3"><span class="n">04</span><span>Greater Wealth</span></li>
+        <li style="--k:4" class="out"><span class="n">05</span><span>Generational Returns</span></li>
+      </ol>
+      <div class="problem">
+        <span class="n">The current problem</span>
+        <p>Mike currently operates without a nightstand, proper seating, or adequate climate control. These conditions represent a direct threat to the family's long-term financial future.</p>
+      </div>
+      <blockquote class="quote">"Your investment today isn't an expense. It's an early position in a potentially billion dollar asset."</blockquote>
+    </div>
+
+    <div class="slide" data-i="2">
+      <span class="eyebrow">How you make money</span>
+      <p class="big">Every dollar you put in comes back to you! Look at the numbers...</p>
+      <div class="slidechart figwrap">
+        <span class="cap">Projected annual value · Room 2.0 vs. current operating conditions</span>
+        <svg id="fig1s" viewBox="0 0 860 300" role="img" aria-label="Projected annual value returned to family, Room 2.0 versus Room 1.0, 2027 to 2036"></svg>
+        <div class="tt" id="tt1s"></div>
+        <span class="cap" style="font-size:10px;opacity:.75">Based on internal assumptions.</span>
+      </div>
+      <span class="eyebrow">Investment opportunities</span>
+      <div class="returns">
+        <div><span class="amt">$25+</span><span class="name">Investor Wall</span><span class="what">Your name on the wall.<br>Plus a picture of your item set up in the room.</span></div>
+        <div><span class="amt">$60+</span><span class="name">Lifetime VIP Access</span><span class="what">Unrestricted access to the room.<br>Includes chair privileges and one TV channel change per visit.</span></div>
+        <div><span class="amt">$150+</span><span class="name">Naming Rights &amp; Partial Ownership</span><span class="what">The room will be named after you until graduation.<br>Includes a 1% ownership stake.</span></div>
+      </div>
+    </div>
+
+    <div class="slide" data-i="3">
+      <span class="eyebrow">Risk disclosures</span>
+      <p class="onlyrisk">The Darth Vader helmet has no measurable effect on rest.</p>
+    </div>
+
+    <div class="slide final" data-i="4">
+      <div class="finalgrid">
+        <div class="me"><img src="img/me.jpg" alt="Michael in a suit at a desk in the finished room, hands steepled"></div>
+        <div class="finaltext">
+          <h2 class="q">Invest in the future.<br><span class="gold">Fund the room.</span></h2>
+          <a class="btn big" href="#assets" data-open>View investment opportunities →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn ghost" id="prev" type="button">← Back</button>
+    <div class="dots" id="dots" role="tablist" aria-label="Slides"></div>
+    <span class="cnt" id="cnt">1 / 5</span>
+    <button class="btn" id="next" type="button">Next →</button>
+  </div>
+</div>
+
+<!-- ============ SITE ============ -->
+<div class="site" id="site">
+<div class="wrap">
+  <div class="topbar">
+    <span class="t">Mike's Room 2.0</span>
+    <span class="r"><span class="pb"><i id="tbfill"></i></span><span id="tbtxt">$0 of $966.21</span><a href="#" id="backdeck">Pitch</a></span>
+  </div>
+
+  <section id="vision">
+    <span class="eyebrow">Artist's rendering · Mike's Room 2.0, fully funded</span>
+    <div class="render"><img src="img/room.jpg" alt="Rendering of the finished room: Giants flag, eagle art, dart board, 65 inch TV, bean bag, tower fan, trampoline, nightstands, candle warmer, Vader helmet and saber on display"></div>
+    <p class="lede" style="margin:10px 0 0">Every item below is in this picture. Your investment buys one of them.</p>
+  </section>
+
+  <section id="assets">
+    <h2>Investment opportunities</h2>
+    <p class="lede">Tap Invest to open the exact item on Amazon. Buy it, ship it to Mike at 721 Aspen Heights Lane Unit #645, Auburn Alabama 😎</p>
+    <div class="assets" id="grid"></div>
+  </section>
+
+  <section id="summary">
+    <h2>Round status</h2>
+    <div class="tiles">
+      <div class="tile"><span class="v mono" id="t-target">$966.21</span><span class="l">Target raise</span></div>
+      <div class="tile"><span class="v mono" id="t-raised">$0.00</span><span class="l">Committed so far</span></div>
+      <div class="tile"><span class="v mono" id="t-assets">18</span><span class="l">Items still open</span></div>
+      <div class="tile"><span class="v mono" id="t-investors">0</span><span class="l">Investors on the wall</span></div>
+    </div>
+    <div class="progress">
+      <div class="bar" role="progressbar" aria-label="Round progress" aria-valuemin="0" aria-valuemax="966.21" aria-valuenow="0" id="pbar"><i id="pfill"></i></div>
+      <div class="row"><span id="ppct">0% funded</span><span id="pleft">$966.21 remaining · closes Dec 24, 2026</span></div>
+    </div>
+  </section>
+
+  <section id="tiers">
+    <h2>Investor tiers</h2>
+    <p class="lede">Fund more than one item and the amounts add up toward the next tier.</p>
+    <div class="tiers" id="tiercards"></div>
+  </section>
+
+  <section id="how">
+    <h2>How to invest</h2>
+    <div class="steps">
+      <div class="step"><h3>Tap Invest</h3><p>It opens that exact item on Amazon. You buy on your own account, so no money moves through this page.</p></div>
+      <div class="step"><h3>Ship to Michael in Auburn</h3><p>Text him for the address. Mark it as a gift if you want a note included.</p></div>
+      <div class="step"><h3>Send the screenshot</h3><p>Your name goes on the Investor Wall within 24 hours and the item is marked funded so nobody doubles up.</p></div>
+    </div>
+    <div class="callout"><b>Prefer cash?</b><span>Send any amount toward the TV or the bean bag and Michael will pool contributions. Tell him which item you want credit for.</span></div>
+  </section>
+
+  <section id="wall">
+    <h2>Investor Wall</h2>
+    <p class="lede">Permanent record, in order of investment.</p>
+    <div class="wall" id="wallbox"></div>
+  </section>
+
+  <section id="analysis">
+    <details class="analysis">
+      <summary>Supporting analysis (3 figures)</summary>
+      <div class="figs">
+        <div class="fig figwrap">
+          <h3>Figure 1. Projected annual value returned to family, 2027 to 2036</h3>
+          <div class="sub">Room 1.0 is the current room. Room 2.0 is this round fully funded.</div>
+          <div class="legend"><span><i class="line" style="background:var(--s1)"></i>Room 2.0 (funded)</span><span><i class="line" style="background:var(--s0)"></i>Room 1.0 (status quo)</span></div>
+          <svg id="fig1" viewBox="0 0 860 320" role="img" aria-labelledby="fig1t"><title id="fig1t">Line chart of projected annual value returned to family under two scenarios</title></svg>
+          <div class="tt" id="tt1"></div>
+          <div class="note">Assumes 42% annual compounding on rest-driven performance. Room 1.0 grows at the rate of inflation. Reviewed by nobody.</div>
+          <details class="table"><summary>View as a table</summary><div id="fig1table"></div></details>
+        </div>
+        <div class="fig figwrap">
+          <h3>Figure 2. Rest impact per dollar, by item</h3>
+          <div class="sub">Rest Impact Score (0 to 10) divided by price, times 100. Higher is a more efficient use of your capital.</div>
+          <div class="legend" id="leg2"></div>
+          <svg id="fig2" viewBox="0 0 860 560" role="img" aria-labelledby="fig2t"><title id="fig2t">Horizontal bar chart of rest impact per dollar for each item</title></svg>
+          <div class="tt" id="tt2"></div>
+          <div class="note">Scores assigned by the issuer after careful reflection. Methodology available on request. It will not hold up.</div>
+        </div>
+        <div class="fig figwrap">
+          <h3>Figure 3. Use of proceeds</h3>
+          <div class="sub">Where the money goes, by category.</div>
+          <svg id="fig3" viewBox="0 0 860 150" role="img" aria-labelledby="fig3t"><title id="fig3t">Stacked bar of capital allocation by category</title></svg>
+          <div class="tt" id="tt3"></div>
+          <div class="legend" id="leg3"></div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <section id="risk">
+    <h2>Risk disclosures</h2>
+    <p style="font:italic 14px/1.5 var(--display);color:var(--muted);max-width:48ch">The Darth Vader helmet has no measurable effect on rest.</p>
+  </section>
+
+  <footer>
+    <span>Mike's Room 2.0 · Auburn, AL</span>
+    <span>Prepared by the issuer · Not audited</span>
+  </footer>
+</div>
+</div>
+
+<script>
+const IMG = {
+  B01HRLW1LU:'img/B01HRLW1LU.jpg',
+  B000B1L9WQ:'img/B000B1L9WQ.jpg',
+  B0050P21B6:'img/B0050P21B6.jpg',
+  B0085OSS1Q:'img/B0085OSS1Q.jpg',
+  B00CANHZ4Y:'img/B00CANHZ4Y.jpg',
+  B07G9X72QW:'img/B07G9X72QW.jpg',
+  B08MFBBT4V:'img/B08MFBBT4V.jpg',
+  B09MKPDJRT:'img/B09MKPDJRT.jpg',
+  B0B7G5DHJ4:'img/B0B7G5DHJ4.jpg',
+  B0B9GMY45N:'img/B0B9GMY45N.jpg',
+  B0BYZ79HWL:'img/B0BYZ79HWL.jpg',
+  B0CQT48RF9:'img/B0CQT48RF9.jpg',
+  B0CXY15Z89:'img/B0CXY15Z89.jpg',
+  B0DB28XF27:'img/B0DB28XF27.jpg',
+  B0DC6HDMRM:'img/B0DC6HDMRM.jpg',
+  B0DF7BDYRY:'img/B0DF7BDYRY.jpg',
+  B0DGCVLGXM:'img/B0DGCVLGXM.jpg',
+  B0GMR27XYD:'img/B0GMR27XYD.jpg',
+  B0H859NKTH:'img/B0H859NKTH.jpg',
+};
+
+// ---- Data -------------------------------------------------------------
+const CATS = {
+  rest:      {name:'Rest & recovery', color:'var(--s1)', blurb:'The items that directly change how well I sleep and wake.'},
+  furniture: {name:'Furniture',       color:'var(--s2)', blurb:'Somewhere to sit and somewhere to put things that is not the floor.'},
+  wellness:  {name:'Wellness',        color:'var(--s3)', blurb:'Body maintenance on rest days.'},
+  decor:     {name:'Décor',           color:'var(--s4)', blurb:'A room with something on the walls feels finished.'},
+  morale:    {name:'Morale',          color:'var(--s5)', blurb:'Strategic morale assets. See risk disclosures.'},
+};
+const ITEMS = [
+  {asin:'B09MKPDJRT', name:'DREO tower fan, 36"',              price:59.97,  cat:'rest',      score:9, why:'Quiet airflow all night. The biggest sleep lever on this list.'},
+  {asin:'B0DB28XF27', name:'Bean bag lounge chair',            price:129.99, cat:'furniture', score:9, why:'Somewhere to sit that is not the bed.'},
+  {asin:'B0CXY15Z89', name:'Reading pillow with arms',         price:37.99,  cat:'rest',      score:8, why:'Study in bed without destroying the lower back.'},
+  {asin:'B0H859NKTH', name:'Insignia 65" 4K Fire TV',          price:299.99, cat:'morale',    score:8, why:'Decompression. The flagship asset.'},
+  {asin:'B0GMR27XYD', name:'Nightstand, set of 2',             price:36.99,  cat:'furniture', score:7, why:'Phone, water and alarm finally leave the floor.'},
+  {asin:'B000B1L9WQ', name:'Rooster alarm clock',              price:24.95,  cat:'rest',      score:7, why:'Wakes me without a phone in the bed. It crows.'},
+  {asin:'B0DF7BDYRY', name:'Mini trampoline, 40"',             price:49.99,  cat:'wellness',  score:7, why:'Low-impact movement on rest days.'},
+  {asin:'B0DC6HDMRM', name:'Candle warmer lamp',               price:22.49,  cat:'rest',      score:6, why:'Warm light and scent, no open flame.'},
+  {asin:'B0B9GMY45N', name:'Bidet attachment',                 price:28.99,  cat:'wellness',  score:6, why:'Everyone who has one says the same thing.'},
+  {asin:'B07G9X72QW', name:'30-minute hourglass',              price:27.99,  cat:'rest',      score:5, why:'Focus timer for study blocks. No screen.'},
+  {asin:'B0050P21B6', name:'Dart board cabinet',               price:41.51,  cat:'morale',    score:5, why:'Five minutes of darts beats five minutes of scrolling.'},
+  {asin:'B0CQT48RF9', name:'Eagle wall art, 3 piece',          price:34.47,  cat:'decor',     score:4, why:'The something for the walls.'},
+  {asin:'B0085OSS1Q', name:'New York Giants 3x5 flag',         price:29.95,  cat:'decor',     score:4, why:'Heritage. Non-negotiable regardless of the season.'},
+  {asin:'B00CANHZ4Y', name:'Darth Vader voice changer helmet', price:79.99,  cat:'morale',    score:4, why:'Morale. See risk disclosures.'},
+  {asin:'B0BYZ79HWL', name:'Helmet display stand',             price:17.99,  cat:'decor',     score:3, why:'The helmet needs a home.'},
+  {asin:'B08MFBBT4V', name:'Light-up saber with sound',        price:16.99,  cat:'morale',    score:3, why:'Pairs with the helmet.'},
+  {asin:'B0DGCVLGXM', name:'Tiger on the toilet print',        price:10.99,  cat:'decor',     score:3, why:'Bathroom art. Cheapest laugh on the list.'},
+  {asin:'B0B7G5DHJ4', name:'Lightsaber desk stand',            price:14.98,  cat:'decor',     score:2, why:'The saber needs a home. Completes the set.'},
+  {asin:'B01HRLW1LU', name:'SKLZ over-the-door mini hoop',      price:49.99,  cat:'morale',    score:6, why:'Break-away rim. Study block ends, shots go up.'},
+];
+// Funded items: asin -> investor name. Michael updates this as orders come in.
+const FUNDED = {};
+const TIERS = [
+  {key:'seed',   name:'Investor Wall', min:0,   max:59.99, perks:['Your name on the Investor Wall','A picture of your item set up in the room']},
+    {key:'vip',    name:'Lifetime VIP',  min:60,  max:149.99,perks:['Unrestricted access to the room','Chair privileges','One TV channel change per visit']},
+  {key:'lead',   name:'Naming Rights', min:150, max:Infinity, perks:['The room is officially named after you until graduation','A 1% ownership stake','First call when the projections land']},
+];
+const tierFor = p => TIERS.find(t => p >= t.min && p <= t.max);
+const money = n => '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const TOTAL = ITEMS.reduce((s,i)=>s+i.price,0);
+const amazon = asin => 'https://www.amazon.com/dp/' + asin;
+
+// ---- Deck ----------------------------------------------------------------
+(function deck(){
+  const slides = [...document.querySelectorAll('.slide')], dots = document.getElementById('dots');
+  let i = 0;
+  slides.forEach((s,k)=>{ const b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label','Slide '+(k+1)); b.addEventListener('click',()=>go(k)); dots.appendChild(b); });
+  function go(k){ i = Math.max(0, Math.min(slides.length-1, k)); slides.forEach((s,n)=>s.classList.toggle('on', n===i)); [...dots.children].forEach((d,n)=>d.setAttribute('aria-current', n===i)); document.getElementById('cnt').textContent = (i+1)+' / '+slides.length; document.getElementById('prev').style.visibility = i?'visible':'hidden'; document.getElementById('next').style.visibility = i<slides.length-1?'visible':'hidden'; }
+  document.getElementById('prev').addEventListener('click',()=>go(i-1));
+  document.getElementById('next').addEventListener('click',()=>go(i+1));
+  document.addEventListener('keydown', e=>{ if(document.body.classList.contains('open')) return; if(e.key==='ArrowRight'||e.key===' ') go(i+1); if(e.key==='ArrowLeft') go(i-1); });
+  let sx=null; const d=document.getElementById('deck');
+  d.addEventListener('touchstart', e=>{ sx=e.touches[0].clientX; }, {passive:true});
+  d.addEventListener('touchend', e=>{ if(sx===null) return; const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>50) go(i+(dx<0?1:-1)); sx=null; });
+  go(0);
+  function open(e){ e.preventDefault(); document.body.classList.add('open'); window.scrollTo(0,0); try{ localStorage.setItem('r20open','1'); }catch(_){} }
+  document.querySelectorAll('[data-open]').forEach(a=>a.addEventListener('click', open));
+  document.getElementById('backdeck').addEventListener('click', e=>{ e.preventDefault(); document.body.classList.remove('open'); go(0); window.scrollTo(0,0); try{ localStorage.removeItem('r20open'); }catch(_){} });
+  try{ if(localStorage.getItem('r20open')==='1' || location.hash==='#assets') document.body.classList.add('open'); }catch(_){}
+})();
+
+// ---- Status -------------------------------------------------------------
+(function status(){
+  const raised = ITEMS.filter(i=>FUNDED[i.asin]).reduce((s,i)=>s+i.price,0);
+  const investors = new Set(Object.values(FUNDED)).size;
+  document.getElementById('t-raised').textContent = money(raised); document.getElementById('t-target').textContent = money(TOTAL); document.getElementById('pbar').setAttribute('aria-valuemax', TOTAL.toFixed(2));
+  document.getElementById('t-investors').textContent = investors;
+  document.getElementById('t-assets').textContent = ITEMS.length - Object.keys(FUNDED).length;
+  const pct = Math.round(raised/TOTAL*100);
+  document.getElementById('ppct').textContent = pct + '% funded';
+  document.getElementById('pleft').textContent = money(TOTAL-raised) + ' remaining · closes Dec 24, 2026';
+  document.getElementById('pbar').setAttribute('aria-valuenow', raised.toFixed(2));
+  document.getElementById('tbtxt').textContent = money(raised).replace('.00','') + ' of ' + money(TOTAL);
+  requestAnimationFrame(()=>{ const w = Math.max(pct, raised>0?2:0) + '%'; document.getElementById('pfill').style.width = w; document.getElementById('tbfill').style.width = w; });
+})();
+
+// ---- Catalogue: one list, serious and ridiculous deliberately interleaved ----
+(function catalogue(){
+  const ORDER = ['B09MKPDJRT','B00CANHZ4Y','B0DB28XF27','B0DGCVLGXM','B0GMR27XYD','B08MFBBT4V','B0CXY15Z89','B000B1L9WQ','B0H859NKTH','B0B7G5DHJ4','B0DC6HDMRM','B0DF7BDYRY','B01HRLW1LU','B0B9GMY45N','B0085OSS1Q','B07G9X72QW','B0050P21B6','B0CQT48RF9','B0BYZ79HWL'];
+  const byAsin = Object.fromEntries(ITEMS.map(i=>[i.asin,i]));
+  const card = i => { const by = FUNDED[i.asin], t = tierFor(i.price);
+    return `<article class="asset${by?' funded':''}">
+      ${by?`<span class="fundedby">Funded by ${by}</span>`:''}
+      <div class="img"><img src="${IMG[i.asin]||''}" alt="${i.name}"></div>
+      <div class="body"><h4>${i.name}</h4></div>
+      <div class="foot"><div><span class="price">${money(i.price)}</span><span class="tier">${t.name} tier</span></div>
+      ${by?`<span class="btn">Funded</span>`:`<a class="btn" href="${amazon(i.asin)}" target="_blank" rel="noopener">Invest</a>`}</div>
+    </article>`; };
+  document.getElementById('grid').innerHTML = ORDER.map(a=>byAsin[a]).filter(Boolean).map(card).join('');
+})();
+
+// ---- Tiers ---------------------------------------------------------------
+document.getElementById('tiercards').innerHTML = TIERS.map((t,i)=>`<div class="tiercard${t.key==='lead'?' lead':''}">
+  <span class="eyebrow">${t.name}</span>
+  <span class="amt">${t.max===Infinity?money(t.min)+' and up':t.min===0?'Under '+money(t.max+0.01):money(t.min)+' to '+money(t.max)}</span>
+  <ul>${t.perks.map(p=>`<li>${p}</li>`).join('')}</ul>
+  ${i?`<span class="inherit">Includes every ${TIERS[i-1].name} return.</span>`:''}
+</div>`).join('');
+
+// ---- Wall ----------------------------------------------------------------
+(function wall(){
+  const box = document.getElementById('wallbox');
+  const entries = ITEMS.filter(i=>FUNDED[i.asin]).map(i=>({name:FUNDED[i.asin], item:i.name, tier:tierFor(i.price).name}));
+  if (!entries.length){ box.innerHTML = '<p class="empty">No investors yet. The first name on this wall holds the top spot for the life of the room.</p>'; return; }
+  box.innerHTML = '<ol>' + entries.map(e=>`<li><b>${e.name}</b> <span>· ${e.item} · ${e.tier}</span></li>`).join('') + '</ol>';
+})();
+
+// ---- Charts --------------------------------------------------------------
+function tooltip(id, wrap){ const el = document.getElementById(id);
+  return { show(x,y,html){ const r = wrap.getBoundingClientRect(); el.innerHTML = html; el.style.left = (x - r.left) + 'px'; el.style.top = (y - r.top) + 'px'; el.classList.add('on'); }, hide(){ el.classList.remove('on'); } }; }
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+
+function drawFig1(svgId, ttId, tableId){
+  const svg = document.getElementById(svgId);
+  const years = []; for (let y=2027; y<=2036; y++) years.push(y);
+  const funded = years.map((y,i)=> Math.round(75 * Math.pow(1.42, i)));
+  const status = years.map((y,i)=> Math.round(50 * Math.pow(1.03, i)));
+  const H = +svg.getAttribute('viewBox').split(' ')[3];
+  const M = {l:64, r:24, t:16, b:36}, W=860;
+  const x = i => M.l + i*(W-M.l-M.r)/(years.length-1);
+  const maxV = 2500; const y = v => H - M.b - v/maxV*(H-M.t-M.b);
+  for (let v=0; v<=maxV; v+=500){ el('line',{x1:M.l,x2:W-M.r,y1:y(v),y2:y(v),class:v?'grid':'ax'},svg); const t=el('text',{x:M.l-8,y:y(v)+4,'text-anchor':'end'},svg); t.textContent='$'+v.toLocaleString(); }
+  years.forEach((yr,i)=>{ const t=el('text',{x:x(i),y:H-M.b+18,'text-anchor':'middle'},svg); t.textContent=yr; });
+  const path = arr => arr.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  el('path',{d:path(funded)+` L${x(years.length-1)} ${y(0)} L${x(0)} ${y(0)} Z`,fill:'var(--accent)',opacity:'0.12'},svg);
+  el('path',{d:path(status),fill:'none',stroke:'var(--s0)','stroke-width':'2','stroke-linejoin':'round'},svg);
+  el('path',{d:path(funded),fill:'none',stroke:'var(--accent)','stroke-width':'3','stroke-linejoin':'round'},svg);
+  const last = years.length-1;
+  el('circle',{cx:x(last),cy:y(funded[last]),r:5,fill:'var(--accent)',stroke:'var(--surface)','stroke-width':'2'},svg);
+  el('circle',{cx:x(last),cy:y(status[last]),r:4,fill:'var(--s0)',stroke:'var(--surface)','stroke-width':'2'},svg);
+  let t=el('text',{x:x(last)-10,y:y(funded[last])-12,'text-anchor':'end',class:'lbl'},svg); t.textContent='Room 2.0 · $'+funded[last].toLocaleString()+' a year';
+  t=el('text',{x:x(last)-10,y:y(status[last])-10,'text-anchor':'end'},svg); t.textContent='Room now · $'+status[last];
+  const wrap = svg.parentElement, tt = tooltip(ttId, wrap);
+  const cross = el('line',{x1:0,x2:0,y1:M.t,y2:H-M.b,stroke:'var(--muted)','stroke-width':'1','stroke-dasharray':'3 3',opacity:'0'},svg);
+  const hit = el('rect',{x:M.l,y:M.t,width:W-M.l-M.r,height:H-M.t-M.b,fill:'transparent'},svg);
+  const move = ev => { const pt = svg.createSVGPoint(); const e = ev.touches ? ev.touches[0] : ev; pt.x=e.clientX; pt.y=e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const i = Math.max(0, Math.min(last, Math.round((p.x-M.l)/((W-M.l-M.r)/last))));
+    cross.setAttribute('x1',x(i)); cross.setAttribute('x2',x(i)); cross.setAttribute('opacity','1');
+    const scr = svg.getScreenCTM(); const sx = x(i)*scr.a+scr.e, sy = y(funded[i])*scr.d+scr.f;
+    tt.show(sx, sy, `<b>${years[i]}</b><br>Room 2.0: $${funded[i].toLocaleString()}<br>Room now: $${status[i]}`); };
+  hit.addEventListener('mousemove', move); hit.addEventListener('touchstart', move, {passive:true}); hit.addEventListener('touchmove', move, {passive:true});
+  hit.addEventListener('mouseleave', ()=>{ tt.hide(); cross.setAttribute('opacity','0'); });
+  if (tableId) document.getElementById(tableId).innerHTML = '<table><tr><th>Year</th><th>Room 2.0</th><th>Room 1.0</th></tr>' + years.map((yr,i)=>`<tr><td>${yr}</td><td>$${funded[i].toLocaleString()}</td><td>$${status[i]}</td></tr>`).join('') + '</table>';
+}
+drawFig1('fig1','tt1','fig1table');
+drawFig1('fig1s','tt1s',null);
+
+(function fig2(){
+  const svg = document.getElementById('fig2');
+  const rows = ITEMS.map(i=>({...i, ipd: i.score/i.price*100})).sort((a,b)=>b.ipd-a.ipd);
+  const M={l:230,r:60,t:8,b:28}, W=860, H=560, rowH=(H-M.t-M.b)/rows.length;
+  const max = 30; const x = v => M.l + v/max*(W-M.l-M.r);
+  for (let v=0; v<=max; v+=10){ el('line',{x1:x(v),x2:x(v),y1:M.t,y2:H-M.b,class:v?'grid':'ax'},svg); const t=el('text',{x:x(v),y:H-M.b+18,'text-anchor':'middle'},svg); t.textContent=v; }
+  const wrap = svg.parentElement, tt = tooltip('tt2', wrap);
+  rows.forEach((r,i)=>{
+    const cy = M.t + i*rowH + rowH/2, h = Math.min(18, rowH-6);
+    const lbl = el('text',{x:M.l-10,y:cy+4,'text-anchor':'end',class:'lbl'},svg); lbl.textContent = r.name.length>30 ? r.name.slice(0,29)+'…' : r.name;
+    el('path',{d:`M${M.l} ${cy-h/2} H${x(r.ipd)-4} a4 4 0 0 1 4 4 V${cy+h/2-4} a4 4 0 0 1 -4 4 H${M.l} Z`,fill:CATS[r.cat].color},svg);
+    const v = el('text',{x:x(r.ipd)+8,y:cy+4},svg); v.textContent = r.ipd.toFixed(1);
+    const hit = el('rect',{x:0,y:cy-rowH/2,width:W,height:rowH,fill:'transparent'},svg);
+    const show = ev => { const e = ev.touches?ev.touches[0]:ev; tt.show(e.clientX, e.clientY, `<b>${r.name}</b><br>${CATS[r.cat].name}<br>Score ${r.score}/10 · ${money(r.price)}<br>Impact per $: ${r.ipd.toFixed(1)}`); };
+    hit.addEventListener('mousemove', show); hit.addEventListener('touchstart', show, {passive:true}); hit.addEventListener('mouseleave', tt.hide);
+  });
+  document.getElementById('leg2').innerHTML = Object.values(CATS).map(c=>`<span><i style="background:${c.color}"></i>${c.name}</span>`).join('');
+})();
+
+(function fig3(){
+  const svg = document.getElementById('fig3');
+  const sums = {}; ITEMS.forEach(i=>{ sums[i.cat]=(sums[i.cat]||0)+i.price; });
+  const order = Object.keys(CATS).sort((a,b)=>sums[b]-sums[a]);
+  const M={t:30}, W=860, bh=44; let cx=0;
+  const wrap = svg.parentElement, tt = tooltip('tt3', wrap);
+  order.forEach((k,idx)=>{
+    const w = sums[k]/TOTAL*W, gap = idx<order.length-1 ? 2 : 0;
+    const r = el('rect',{x:cx,y:M.t,width:Math.max(0,w-gap),height:bh,fill:CATS[k].color,rx:idx===0||idx===order.length-1?4:0},svg);
+    const pct = Math.round(sums[k]/TOTAL*100);
+    if (w > 70){ const t = el('text',{x:cx+w/2,y:M.t+bh+18,'text-anchor':'middle',class:'lbl'},svg); t.textContent = pct+'%'; const t2=el('text',{x:cx+w/2,y:M.t+bh+32,'text-anchor':'middle'},svg); t2.textContent = money(sums[k]); }
+    const show = ev => { const e = ev.touches?ev.touches[0]:ev; tt.show(e.clientX, e.clientY, `<b>${CATS[k].name}</b><br>${money(sums[k])} · ${pct}%`); };
+    r.addEventListener('mousemove', show); r.addEventListener('touchstart', show, {passive:true}); r.addEventListener('mouseleave', tt.hide);
+    cx += w;
+  });
+  const t = el('text',{x:0,y:18,class:'lbl'},svg); t.textContent = 'Total raise ' + money(TOTAL);
+  document.getElementById('leg3').innerHTML = order.map(k=>`<span><i style="background:${CATS[k].color}"></i>${CATS[k].name} · ${money(sums[k])}</span>`).join('');
+})();
+</script>
+
+</body>
+</html>
