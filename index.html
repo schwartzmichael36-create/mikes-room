@@ -257,7 +257,7 @@ footer{padding-block:28px;border-top:1px solid var(--ink);font-family:var(--mono
 
     <div class="slide" data-i="3">
       <span class="eyebrow">Risk disclosures</span>
-      <p class="onlyrisk">The Darth Vader helmet has no measurable effect on rest.</p>
+      <p class="onlyrisk">The Mandalorian helmet has no measurable effect on rest.</p>
     </div>
 
     <div class="slide final" data-i="4">
@@ -369,7 +369,7 @@ footer{padding-block:28px;border-top:1px solid var(--ink);font-family:var(--mono
 
   <section id="risk">
     <h2>Risk disclosures</h2>
-    <p style="font:italic 14px/1.5 var(--display);color:var(--muted);max-width:48ch">The Darth Vader helmet has no measurable effect on rest.</p>
+    <p style="font:italic 14px/1.5 var(--display);color:var(--muted);max-width:48ch">The Mandalorian helmet has no measurable effect on rest.</p>
   </section>
 
   <footer>
@@ -385,13 +385,14 @@ const IMG = {
   B000B1L9WQ:'img/B000B1L9WQ.jpg',
   B0050P21B6:'img/B0050P21B6.jpg',
   B0085OSS1Q:'img/B0085OSS1Q.jpg',
-  B00CANHZ4Y:'img/B00CANHZ4Y.jpg',
+  B0D4JW2NL9:'img/B0D4JW2NL9.jpg',
   B07G9X72QW:'img/B07G9X72QW.jpg',
   B08MFBBT4V:'img/B08MFBBT4V.jpg',
   B09MKPDJRT:'img/B09MKPDJRT.jpg',
   B0B7G5DHJ4:'img/B0B7G5DHJ4.jpg',
   B0B9GMY45N:'img/B0B9GMY45N.jpg',
   B0BYZ79HWL:'img/B0BYZ79HWL.jpg',
+  B0GPRMXJQS:'img/B0GPRMXJQS.jpg',
   B0CQT48RF9:'img/B0CQT48RF9.jpg',
   B0CXY15Z89:'img/B0CXY15Z89.jpg',
   B0DB28XF27:'img/B0DB28XF27.jpg',
@@ -424,7 +425,8 @@ const ITEMS = [
   {asin:'B0050P21B6', name:'Dart board cabinet',               price:41.51,  cat:'morale',    score:5, why:'Five minutes of darts beats five minutes of scrolling.'},
   {asin:'B0CQT48RF9', name:'Eagle wall art, 3 piece',          price:34.47,  cat:'decor',     score:4, why:'The something for the walls.'},
   {asin:'B0085OSS1Q', name:'New York Giants 3x5 flag',         price:29.95,  cat:'decor',     score:4, why:'Heritage. Non-negotiable regardless of the season.'},
-  {asin:'B00CANHZ4Y', name:'Darth Vader voice changer helmet', price:79.99,  cat:'morale',    score:4, why:'Morale. See risk disclosures.'},
+  {asin:'B0D4JW2NL9', name:'Mandalorian steel helmet',         price:95.00,  cat:'morale',    score:4, why:'Morale. See risk disclosures.'},
+  {asin:'B0GPRMXJQS', name:'Riddell SpeedFlex Auburn helmet',    price:107.66, cat:'decor',     score:6, why:'War Eagle.'},
   {asin:'B0BYZ79HWL', name:'Helmet display stand',             price:17.99,  cat:'decor',     score:3, why:'The helmet needs a home.'},
   {asin:'B08MFBBT4V', name:'Light-up saber with sound',        price:16.99,  cat:'morale',    score:3, why:'Pairs with the helmet.'},
   {asin:'B0DGCVLGXM', name:'Tiger on the toilet print',        price:10.99,  cat:'decor',     score:3, why:'Bathroom art. Cheapest laugh on the list.'},
@@ -432,7 +434,7 @@ const ITEMS = [
   {asin:'B01HRLW1LU', name:'SKLZ over-the-door mini hoop',      price:49.99,  cat:'morale',    score:6, why:'Break-away rim. Study block ends, shots go up.'},
 ];
 // Funded items: asin -> investor name. Michael updates this as orders come in.
-const FUNDED = {B0H859NKTH:'Sarah', B0DB28XF27:'Anna', B09MKPDJRT:'Anna'};
+const FUNDED = {B0H859NKTH:'Sarah', B0DB28XF27:'Anna', B09MKPDJRT:'Anna', B000B1L9WQ:'Abby', B0DGCVLGXM:'Abby'};
 const TIERS = [
   {key:'seed',   name:'Investor Wall', min:0,   max:59.99, perks:['Your name on the Investor Wall','A picture of your item set up in the room']},
     {key:'vip',    name:'Lifetime VIP',  min:60,  max:149.99,perks:['Unrestricted access to the room','Chair privileges','One TV channel change per visit']},
@@ -479,7 +481,7 @@ const amazon = asin => 'https://www.amazon.com/dp/' + asin;
 
 // ---- Catalogue: one list, serious and ridiculous deliberately interleaved ----
 (function catalogue(){
-  const ORDER = ['B09MKPDJRT','B00CANHZ4Y','B0DB28XF27','B0DGCVLGXM','B0GMR27XYD','B08MFBBT4V','B0CXY15Z89','B000B1L9WQ','B0H859NKTH','B0B7G5DHJ4','B0DC6HDMRM','B0DF7BDYRY','B01HRLW1LU','B0B9GMY45N','B0085OSS1Q','B07G9X72QW','B0050P21B6','B0CQT48RF9','B0BYZ79HWL'];
+  const ORDER = ['B09MKPDJRT','B0D4JW2NL9','B0DB28XF27','B0DGCVLGXM','B0GMR27XYD','B08MFBBT4V','B0CXY15Z89','B000B1L9WQ','B0H859NKTH','B0B7G5DHJ4','B0DC6HDMRM','B0DF7BDYRY','B01HRLW1LU','B0GPRMXJQS','B0B9GMY45N','B0085OSS1Q','B07G9X72QW','B0050P21B6','B0CQT48RF9','B0BYZ79HWL'];
   const byAsin = Object.fromEntries(ITEMS.map(i=>[i.asin,i]));
   const card = i => { const by = FUNDED[i.asin], t = tierFor(i.price);
     return `<article class="asset${by?' funded':''}">
